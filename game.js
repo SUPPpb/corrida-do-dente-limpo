@@ -44,7 +44,7 @@ function iniciarJogo() {
 
   dente = {
     x: gameCanvas.width / 2 - 25,
-    y: gameCanvas.height - 80,
+    y: gameCanvas.height - 110,
     largura: 50,
     altura: 50,
     velocidade: 10
