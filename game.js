@@ -4,9 +4,6 @@ const gameCanvas = document.getElementById('gameCanvas');
 const scoreElement = document.getElementById('score');
 const ctx = gameCanvas.getContext('2d');
 
-gameCanvas.width = 600;
-gameCanvas.height = 400;
-
 let dente, alimentos, pontuacao, jogoAtivo;
 
 const imagemDente = new Image();
@@ -34,7 +31,15 @@ const imagensItens = {
 
 startButton.addEventListener('click', iniciarJogo);
 
+function ajustarCanvas() {
+  const largura = window.innerWidth > 600 ? 600 : window.innerWidth * 0.9;
+  const altura = largura * 0.66;
+  gameCanvas.width = largura;
+  gameCanvas.height = altura;
+}
+
 function iniciarJogo() {
+  ajustarCanvas();
   startScreen.style.display = 'none';
   gameCanvas.style.display = 'block';
   scoreElement.style.display = 'block';
@@ -101,6 +106,9 @@ function atualizar() {
 }
 
 window.addEventListener('keydown', moverDente);
+window.addEventListener('resize', () => {
+  if (jogoAtivo) ajustarCanvas();
+});
 
 function moverDente(e) {
   if (!jogoAtivo) return;
