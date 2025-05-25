@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corrida do Dente Limpo</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Corrida do Dente Limpo</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Corrida do Dente Limpo</h1>
-    <div id="gameContainer">
-        <div id="startScreen">
-            <img src="assets/dentista.png" alt="Dentista">
-            <p>Olá! Parabéns por cuidar do seu sorriso! Vamos jogar?</p>
-            <button id="startButton">Começar</button>
-        </div>
-        <canvas id="gameCanvas"></canvas>
-        <div id="score">Pontuação: 0</div>
+  <h1>Corrida do Dente Limpo</h1>
+  <div id="gameContainer">
+    <div id="startScreen">
+      <img src="assets/dentista.png" alt="Dentista" />
+      <p>Olá! Parabéns por cuidar do seu sorriso! Vamos jogar?</p>
+      <button id="startButton">Começar</button>
     </div>
-    <script src="game.js"></script>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Botões para controle no celular -->
+    <div id="mobileControls">
+      <button id="btnEsquerda">⬅️</button>
+      <button id="btnDireita">➡️</button>
+    </div>
+
+    <div id="score">Pontuação: 0</div>
+  </div>
+  <script src="game.js"></script>
 </body>
 </html>
