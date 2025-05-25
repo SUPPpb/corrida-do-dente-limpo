@@ -41,7 +41,7 @@ h1 {
 
 #gameCanvas {
     width: 100%;
-    background: url('fundo.png') no-repeat center center;
+    background: url('assets/fundo.png') no-repeat center center;
     background-size: cover;
     display: none;
 }
