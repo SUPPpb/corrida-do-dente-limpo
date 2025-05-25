@@ -42,23 +42,33 @@ document.addEventListener('DOMContentLoaded', () => {
     pontuacao = 0;
     jogoAtivo = true;
 
-    dente = { x: 50, y: 200, largura: 50, altura: 50, velocidade: 5 };
+    // Dentinho fixo no chão
+    dente = {
+      x: gameCanvas.width / 2 - 25,
+      y: gameCanvas.height - 60,
+      largura: 50,
+      altura: 50,
+      velocidade: 7
+    };
+
     alimentos = gerarAlimentos();
 
     atualizar();
   }
 
   function gerarAlimentos() {
-    const tipos = ['positivo', 'negativo', 'positivo', 'positivo'];
-    return tipos.map((tipo, i) => ({
-      x: 600 + i * 200,
-      y: Math.random() * 300,
-      tipo: tipo,
-      imagem:
-        tipo === 'negativo'
-          ? imagemCarie
-          : [imagemEscova, imagemFio, imagemPasta][Math.floor(Math.random() * 3)]
-    }));
+    const tipos = ['positivo', 'negativo', 'positivo'];
+    return tipos.map(() => ({
+      x: Math.random() * (gameCanvas.width - 30),
+      y: -Math.random() * 200, // começa acima da tela
+      tipo: Math.random() < 0.7 ? 'positivo' : 'negativo',
+      imagem: null
+    })).map(alimento => {
+      alimento.imagem = alimento.tipo === 'negativo'
+        ? imagemCarie
+        : [imagemEscova, imagemFio, imagemPasta][Math.floor(Math.random() * 3)];
+      return alimento;
+    });
   }
 
   function atualizar() {
@@ -68,35 +78,36 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.drawImage(imagemDente, dente.x, dente.y, dente.largura, dente.altura);
 
     alimentos.forEach(alimento => {
-      alimento.x -= 3;
+      alimento.y += 3; // cair do céu
+
       ctx.drawImage(alimento.imagem, alimento.x, alimento.y, 30, 30);
 
       const colidiu =
         alimento.x < dente.x + dente.largura &&
         alimento.x + 30 > dente.x &&
-        alimento.y < dente.y + dente.altura &&
         alimento.y + 30 > dente.y;
 
       if (colidiu) {
-        if (alimento.tipo === 'positivo') {
-          pontuacao++;
-        } else {
-          pontuacao--;
-        }
+        pontuacao += alimento.tipo === 'positivo' ? 1 : -1;
 
-        // Condição de vitória
         if (pontuacao >= 5) {
           jogoAtivo = false;
           mostrarTelaFinal();
         }
 
-        alimento.x = 600 + Math.random() * 400;
-        alimento.y = Math.random() * (gameCanvas.height - 30);
+        // Reinicia o alimento
+        alimento.x = Math.random() * (gameCanvas.width - 30);
+        alimento.y = -30;
         alimento.tipo = Math.random() < 0.7 ? 'positivo' : 'negativo';
-        alimento.imagem =
-          alimento.tipo === 'negativo'
-            ? imagemCarie
-            : [imagemEscova, imagemFio, imagemPasta][Math.floor(Math.random() * 3)];
+        alimento.imagem = alimento.tipo === 'negativo'
+          ? imagemCarie
+          : [imagemEscova, imagemFio, imagemPasta][Math.floor(Math.random() * 3)];
+      }
+
+      // Caso passe da tela
+      if (alimento.y > gameCanvas.height) {
+        alimento.y = -30;
+        alimento.x = Math.random() * (gameCanvas.width - 30);
       }
     });
 
@@ -111,13 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
     scoreElement.textContent = `Parabéns! Pontuação final: ${pontuacao}`;
   }
 
+  // Movimentação lateral com teclado
   window.addEventListener('keydown', e => {
     if (!jogoAtivo) return;
 
-    if (e.key === 'ArrowUp' && dente.y > 0) {
-      dente.y -= dente.velocidade;
-    } else if (e.key === 'ArrowDown' && dente.y < gameCanvas.height - dente.altura) {
-      dente.y += dente.velocidade;
+    if (e.key === 'ArrowLeft' && dente.x > 0) {
+      dente.x -= dente.velocidade;
+    } else if (e.key === 'ArrowRight' && dente.x < gameCanvas.width - dente.largura) {
+      dente.x += dente.velocidade;
     }
   });
 });
