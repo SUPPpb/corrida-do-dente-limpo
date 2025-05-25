@@ -1,4 +1,4 @@
-// game.js atualizado com escala responsiva e controle de toque contínuo
+// game.js atualizado com escala responsiva, controle de toque contínuo e espaçamento entre botões
 const startButton = document.getElementById('startButton');
 const startScreen = document.getElementById('startScreen');
 const gameCanvas = document.getElementById('gameCanvas');
