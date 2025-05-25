@@ -1,15 +1,211 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Corrida do Dente Limpo</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corrida do Dente Limpo</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #aee1f9;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            background-color: #aee1f9;
+        }
+
+        #btnStart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #pontuacao {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #333;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
-  <h1>Corrida do Dente Limpo</h1>
-  <div id="game"></div>
-  <script src="game.js"></script>
+
+    <div id="pontuacao">Pontuação: 0</div>
+    <button id="btnStart">Começar</button>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const btnStart = document.getElementById('btnStart');
+        const pontuacaoDiv = document.getElementById('pontuacao');
+
+        // 🖥️ Ajustar o tamanho da tela
+        function ajustarCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', ajustarCanvas);
+        ajustarCanvas();
+
+        // 🎨 Carregar imagem de fundo
+        const imgFundo = new Image();
+        imgFundo.src = 'fundo.png'; // <-- Troque para o caminho correto do seu fundo
+
+        // 😁 Carregar imagem do personagem (dente)
+        const imgDente = new Image();
+        imgDente.src = 'dente.png'; // <-- Troque para o caminho correto do seu dente
+
+        // 🧽 Carregar itens
+        const imgItem = new Image();
+        imgItem.src = 'item.png'; // <-- Seu item (fio dental, escova, etc.)
+
+        // 💀 Carregar obstáculo
+        const imgObstaculo = new Image();
+        imgObstaculo.src = 'obstaculo.png'; // <-- Placa bacteriana, etc.
+
+        // 🔥 Variáveis do jogo
+        let dente = {
+            x: 100,
+            y: 100,
+            largura: 80,
+            altura: 80,
+            velocidade: 5
+        };
+
+        let itens = [];
+        let obstaculos = [];
+        let pontuacao = 0;
+        let jogoAtivo = false;
+
+        // 🎮 Movimentação para celular (simples por enquanto)
+        window.addEventListener('touchstart', () => {
+            dente.y -= 100; // Salto
+        });
+
+        // Movimentação teclado (opcional para desktop)
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'ArrowUp') dente.y -= 50;
+            if (e.code === 'ArrowDown') dente.y += 50;
+        });
+
+        function criarItem() {
+            itens.push({
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 50),
+                largura: 50,
+                altura: 50
+            });
+        }
+
+        function criarObstaculo() {
+            obstaculos.push({
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 50),
+                largura: 50,
+                altura: 50
+            });
+        }
+
+        function colisao(a, b) {
+            return (
+                a.x < b.x + b.largura &&
+                a.x + a.largura > b.x &&
+                a.y < b.y + b.altura &&
+                a.y + a.altura > b.y
+            );
+        }
+
+        function atualizar() {
+            if (!jogoAtivo) return;
+
+            dente.y += 5; // Gravidade simples
+
+            if (dente.y + dente.altura > canvas.height) {
+                dente.y = canvas.height - dente.altura;
+            }
+            if (dente.y < 0) {
+                dente.y = 0;
+            }
+
+            itens.forEach((item, index) => {
+                item.x -= 6;
+                if (colisao(dente, item)) {
+                    pontuacao += 1;
+                    itens.splice(index, 1);
+                }
+                if (item.x + item.largura < 0) {
+                    itens.splice(index, 1);
+                }
+            });
+
+            obstaculos.forEach((obs, index) => {
+                obs.x -= 6;
+                if (colisao(dente, obs)) {
+                    jogoAtivo = false;
+                    alert('Fim de jogo! Sua pontuação foi: ' + pontuacao);
+                    location.reload();
+                }
+                if (obs.x + obs.largura < 0) {
+                    obstaculos.splice(index, 1);
+                }
+            });
+
+            if (Math.random() < 0.02) criarItem();
+            if (Math.random() < 0.02) criarObstaculo();
+
+            pontuacaoDiv.innerText = 'Pontuação: ' + pontuacao;
+        }
+
+        function desenhar() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.drawImage(imgFundo, 0, 0, canvas.width, canvas.height);
+
+            ctx.drawImage(imgDente, dente.x, dente.y, dente.largura, dente.altura);
+
+            itens.forEach(item => {
+                ctx.drawImage(imgItem, item.x, item.y, item.largura, item.altura);
+            });
+
+            obstaculos.forEach(obs => {
+                ctx.drawImage(imgObstaculo, obs.x, obs.y, obs.largura, obs.altura);
+            });
+        }
+
+        function loop() {
+            atualizar();
+            desenhar();
+            requestAnimationFrame(loop);
+        }
+
+        btnStart.addEventListener('click', () => {
+            btnStart.style.display = 'none';
+            jogoAtivo = true;
+            loop();
+        });
+    </script>
 </body>
 </html>
-
