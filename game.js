@@ -1,9 +1,11 @@
+// game.js atualizado com escala responsiva
 const startButton = document.getElementById('startButton');
 const startScreen = document.getElementById('startScreen');
 const gameCanvas = document.getElementById('gameCanvas');
 const scoreElement = document.getElementById('score');
 const ctx = gameCanvas.getContext('2d');
 
+let escala = 1;
 let dente, alimentos, pontuacao, jogoAtivo;
 
 const imagemDente = new Image();
@@ -29,14 +31,17 @@ const imagensItens = {
   })()
 };
 
-startButton.addEventListener('click', iniciarJogo);
-
 function ajustarCanvas() {
-  const largura = window.innerWidth > 600 ? 600 : window.innerWidth * 0.9;
-  const altura = largura * 0.66;
-  gameCanvas.width = largura;
-  gameCanvas.height = altura;
+  const larguraPadrao = 600;
+  const alturaPadrao = 400;
+  const larguraDisponivel = window.innerWidth * 0.9;
+  escala = larguraDisponivel >= larguraPadrao ? 1 : larguraDisponivel / larguraPadrao;
+
+  gameCanvas.width = larguraPadrao * escala;
+  gameCanvas.height = alturaPadrao * escala;
 }
+
+startButton.addEventListener('click', iniciarJogo);
 
 function iniciarJogo() {
   ajustarCanvas();
@@ -48,11 +53,11 @@ function iniciarJogo() {
   jogoAtivo = true;
 
   dente = {
-    x: gameCanvas.width / 2 - 25,
-    y: gameCanvas.height - 110,
-    largura: 50,
-    altura: 50,
-    velocidade: 10
+    x: (600 / 2 - 25) * escala,
+    y: (400 - 110) * escala,
+    largura: 50 * escala,
+    altura: 50 * escala,
+    velocidade: 10 * escala
   };
 
   alimentos = gerarAlimentos();
@@ -66,8 +71,8 @@ function gerarAlimentos() {
 function criarAlimento() {
   const tipo = Math.random() < 0.7 ? 'positivo' : 'negativo';
   return {
-    x: Math.random() * (gameCanvas.width - 30),
-    y: -30,
+    x: Math.random() * (600 - 30) * escala,
+    y: -30 * escala,
     tipo: tipo,
     imagem: tipo === 'positivo'
       ? imagensItens.positivo[Math.floor(Math.random() * imagensItens.positivo.length)]
@@ -83,14 +88,14 @@ function atualizar() {
   ctx.drawImage(imagemDente, dente.x, dente.y, dente.largura, dente.altura);
 
   alimentos.forEach(alimento => {
-    alimento.y += 3;
-    ctx.drawImage(alimento.imagem, alimento.x, alimento.y, 30, 30);
+    alimento.y += 3 * escala;
+    ctx.drawImage(alimento.imagem, alimento.x, alimento.y, 30 * escala, 30 * escala);
 
     if (
       alimento.x < dente.x + dente.largura &&
-      alimento.x + 30 > dente.x &&
+      alimento.x + 30 * escala > dente.x &&
       alimento.y < dente.y + dente.altura &&
-      alimento.y + 30 > dente.y
+      alimento.y + 30 * escala > dente.y
     ) {
       pontuacao += alimento.tipo === 'positivo' ? 1 : -1;
       Object.assign(alimento, criarAlimento());
@@ -106,9 +111,6 @@ function atualizar() {
 }
 
 window.addEventListener('keydown', moverDente);
-window.addEventListener('resize', () => {
-  if (jogoAtivo) ajustarCanvas();
-});
 
 function moverDente(e) {
   if (!jogoAtivo) return;
@@ -120,7 +122,6 @@ function moverDente(e) {
   }
 }
 
-// Controles de toque (mobile)
 document.getElementById('btnEsquerda').addEventListener('click', () => {
   if (jogoAtivo && dente.x > 0) {
     dente.x -= dente.velocidade;
