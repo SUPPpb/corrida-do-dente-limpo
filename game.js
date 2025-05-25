@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dentinho fixo no chão
     dente = {
       x: gameCanvas.width / 2 - 25,
-      y: gameCanvas.height - 60,
+      y: gameCanvas.height - 90,
       largura: 50,
       altura: 50,
       velocidade: 7
