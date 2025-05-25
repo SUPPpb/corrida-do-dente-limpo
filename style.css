@@ -1,12 +1,56 @@
 body {
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  background-color: #aee1f9;
-  font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #add8e6;
+    text-align: center;
 }
 
-#game {
-  margin: auto;
+h1 {
+    margin-top: 10px;
 }
 
+#gameContainer {
+    position: relative;
+    width: 90vw;
+    max-width: 600px;
+    margin: auto;
+    background-color: #87ceeb;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+#startScreen {
+    padding: 20px;
+}
+
+#startScreen img {
+    max-width: 100%;
+    height: auto;
+}
+
+#startScreen button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+#gameCanvas {
+    width: 100%;
+    background: url('fundo.png') no-repeat center center;
+    background-size: cover;
+    display: none;
+}
+
+#score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-weight: bold;
+    color: #000;
+    display: none;
+}
