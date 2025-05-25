@@ -1,20 +1,3 @@
-const config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 400,
-    parent: 'game',
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 300 },
-            debug: false
-        }
-    },
-    scene: [Inicio, Jogo, Fim]
-};
-
-const game = new Phaser.Game(config);
-
 function carregarSprite(scene, nome) {
     scene.load.image(nome, `assets/${nome}.png`);
 }
@@ -59,7 +42,7 @@ class Jogo extends Phaser.Scene {
     }
 
     preload() {
-        ['fundo', 'dentinho', 'escova', 'fio_dental', 'pasta', 'cárie'].forEach(nome => carregarSprite(this, nome));
+        ['fundo', 'dentinho', 'escova', 'fio_dental', 'pasta', 'carie'].forEach(nome => carregarSprite(this, nome));
     }
 
     create() {
@@ -109,7 +92,7 @@ class Jogo extends Phaser.Scene {
     }
 
     gerarCarie() {
-        const carie = this.caries.create(800, 350, 'cárie');
+        const carie = this.caries.create(800, 350, 'carie');
         carie.setVelocityX(-250);
         carie.setScale(0.4);
     }
@@ -162,3 +145,20 @@ class Fim extends Phaser.Scene {
     }
 }
 
+// ⚠️ Importante: O config deve vir depois das classes estarem declaradas.
+const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 400,
+    parent: 'game',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 300 },
+            debug: false
+        }
+    },
+    scene: [Inicio, Jogo, Fim]
+};
+
+const game = new Phaser.Game(config);
