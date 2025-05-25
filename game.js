@@ -1,12 +1,16 @@
-// game.js atualizado com escala responsiva
+// game.js atualizado com escala responsiva e controle de toque contínuo
 const startButton = document.getElementById('startButton');
 const startScreen = document.getElementById('startScreen');
 const gameCanvas = document.getElementById('gameCanvas');
 const scoreElement = document.getElementById('score');
+const btnEsquerda = document.getElementById('btnEsquerda');
+const btnDireita = document.getElementById('btnDireita');
 const ctx = gameCanvas.getContext('2d');
 
 let escala = 1;
 let dente, alimentos, pontuacao, jogoAtivo;
+let moverEsquerda = false;
+let moverDireita = false;
 
 const imagemDente = new Image();
 imagemDente.src = 'assets/dentinho.png';
@@ -87,6 +91,13 @@ function atualizar() {
   ctx.drawImage(imagemFundo, 0, 0, gameCanvas.width, gameCanvas.height);
   ctx.drawImage(imagemDente, dente.x, dente.y, dente.largura, dente.altura);
 
+  if (moverEsquerda && dente.x > 0) {
+    dente.x -= dente.velocidade;
+  }
+  if (moverDireita && dente.x < gameCanvas.width - dente.largura) {
+    dente.x += dente.velocidade;
+  }
+
   alimentos.forEach(alimento => {
     alimento.y += 3 * escala;
     ctx.drawImage(alimento.imagem, alimento.x, alimento.y, 30 * escala, 30 * escala);
@@ -122,14 +133,14 @@ function moverDente(e) {
   }
 }
 
-document.getElementById('btnEsquerda').addEventListener('click', () => {
-  if (jogoAtivo && dente.x > 0) {
-    dente.x -= dente.velocidade;
-  }
-});
+// Controles contínuos para toque (mobile)
+btnEsquerda.addEventListener('touchstart', () => moverEsquerda = true);
+btnEsquerda.addEventListener('touchend', () => moverEsquerda = false);
+btnDireita.addEventListener('touchstart', () => moverDireita = true);
+btnDireita.addEventListener('touchend', () => moverDireita = false);
 
-document.getElementById('btnDireita').addEventListener('click', () => {
-  if (jogoAtivo && dente.x < gameCanvas.width - dente.largura) {
-    dente.x += dente.velocidade;
-  }
-});
+// Suporte a mouse também para testes em desktop
+btnEsquerda.addEventListener('mousedown', () => moverEsquerda = true);
+btnEsquerda.addEventListener('mouseup', () => moverEsquerda = false);
+btnDireita.addEventListener('mousedown', () => moverDireita = true);
+btnDireita.addEventListener('mouseup', () => moverDireita = false);
